@@ -30,17 +30,17 @@ public class Main extends Application {
     private void eventOnClick() {
         Field.setOnMouseClicked(event -> {
             Rectangle Pane = (Rectangle) event.getTarget();
-            Pane.setRotate(90);
+            Pane.setRotate(90);                             //should rotate on every click
             System.out.println("click");
         });
     }
 
     private void setupPipes() {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {                       //field 3x3
             for (int j = 0; j < 3; j++) {
                 pane = new Rectangle(200, 200);
                 byte[][] map = {
-                        {22, 33, 23},
+                        {22, 33, 23},                       //number means special pipe
                         {32, 40, 34},
                         {21, 31, 24},
                 };
