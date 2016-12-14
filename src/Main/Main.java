@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -25,14 +24,14 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         setupField ();
         setupPipes ();
-        eventOnKlick ();
+        eventOnClick ();
     }
 
-    private void eventOnKlick() {
+    private void eventOnClick() {
         Field.setOnMouseClicked(event -> {
             Rectangle Pane = (Rectangle) event.getTarget();
-            System.out.println("klick");
             Pane.setRotate(90);
+            System.out.println("click");
         });
     }
 
@@ -40,15 +39,28 @@ public class Main extends Application {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 pane = new Rectangle(200, 200);
-                int random = (int) (Math.random() * 4);
-                if (random == 0){
-                    pane.setFill(ipipefill);
-                } else if (random == 1){
-                    pane.setFill(cpipefill);
-                } else if (random == 2){
-                    pane.setFill(tpipefill);
-                } else {
+                byte[][] map = {
+                        {22, 33, 23},
+                        {32, 40, 34},
+                        {21, 31, 24},
+                };
+
+                if (map[j][i] == 40){
                     pane.setFill(xpipefill);
+                } else if (map[j][i] == 11){
+                    pane.setFill(ipipefill);
+                } else if (map[j][i] == 12){
+                    pane.setFill(ipipefill);
+                } else if (map[j][i] == 21){
+                    pane.setFill(cpipefill);
+                } else if (map[j][i] == 22){
+                    pane.setFill(cpipefill);
+                } else if (map[j][i] == 23){
+                    pane.setFill(cpipefill);
+                } else if (map[j][i] == 24){
+                    pane.setFill(cpipefill);
+                } else {
+                    pane.setFill(tpipefill);
                 }
 
                 Field.add(pane, i, j);
@@ -63,5 +75,9 @@ public class Main extends Application {
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.show();
+        stage.setTitle("Game Tubes");
+    }
+    public static void main(String args[]) {
+        launch(args);
     }
 }
