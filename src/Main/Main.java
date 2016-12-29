@@ -2,19 +2,25 @@ package Main;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import java.util.Optional;
+
 public class Main extends Application {
-    GridPane Field;
+    //Globalaalsed muutujad, mis kasutatakse ainult selle klassi sees
+
+    private GridPane Field;
     Rectangle pane;
-    Image cpipe = new Image("c-pipe.png");
-    Image ipipe = new Image("i-pipe.png");
-    Image tpipe = new Image("t-pipe.png");
-    Image xpipe = new Image("x-pipe.png");
+    Image cpipe = new Image("Main/img/c-pipe.png");
+    Image ipipe = new Image("Main/img/i-pipe.png");
+    Image tpipe = new Image("Main/img/t-pipe.png");
+    Image xpipe = new Image("Main/img/x-pipe.png");
     ImagePattern cpipefill = new ImagePattern(cpipe);
     ImagePattern ipipefill = new ImagePattern(ipipe);
     ImagePattern tpipefill = new ImagePattern(tpipe);
@@ -76,6 +82,22 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
         stage.setTitle("Game Tubes");
+        
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("New game");
+        alert.setHeaderText("Welcome to GameTubes!");
+        alert.setContentText("Please press 'Start' to start first level or 'Exit' to exit the application.");
+
+        ButtonType buttonNext = new ButtonType("Next");
+        ButtonType buttonExit = new ButtonType("Exit");
+        alert.getButtonTypes().setAll(buttonNext, buttonExit);
+
+        Optional<ButtonType> result = alert.showAndWait(); //result on muutuja
+        if (result.get() == buttonNext){
+            System.out.println("Next");
+        } else if (result.get() == buttonExit){
+            System.out.println("Exit");
+        }
     }
     public static void main(String args[]) {
         launch(args);
