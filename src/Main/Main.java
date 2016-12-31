@@ -9,14 +9,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
 import java.util.Optional;
 
 public class Main extends Application {
-    //Globalaalsed muutujad, mis kasutatakse ainult selle klassi sees
 
-    private GridPane Field;
-    Rectangle pane;
+    //Globalaalsed muutujad, mis kasutatakse ainult selle klassi sees
+    private GridPane Field = new GridPane();
     Image cpipe = new Image("Main/img/c-pipe.png");
     Image ipipe = new Image("Main/img/i-pipe.png");
     Image tpipe = new Image("Main/img/t-pipe.png");
@@ -27,10 +25,38 @@ public class Main extends Application {
     ImagePattern xpipefill = new ImagePattern(xpipe);
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        setupField ();
-        setupPipes ();
-        eventOnClick ();
+    public void start(Stage primaryStage) {
+        //informatsiooni akna loomine tekstiga
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("New game");
+        alert.setHeaderText("Welcome to GameTubes!");
+        alert.setContentText("Please press 'Start' to start first level or 'Exit' to exit the application.");
+
+        //Next ja Exit nupude loomine aknas
+        ButtonType buttonNext = new ButtonType("Next");
+        ButtonType buttonExit = new ButtonType("Exit");
+        alert.getButtonTypes().setAll(buttonNext, buttonExit);
+
+        //vajutades nupule Next avaneb mänguväli
+        //vajutades nupule Exit programm pannakse kinni
+        Optional<ButtonType> result = alert.showAndWait(); //(result on muutuja)
+        if (result.isPresent() && result.get() == buttonNext){
+            setupField ();
+            setupPipes ();
+            eventOnClick ();
+        } else if (result.isPresent() && result.get() == buttonExit){
+            System.out.println("Exit");
+        }
+    }
+
+    private void setupField() {
+        //mänguvälja loomine
+        Field = new GridPane();
+        Scene scene = new Scene(Field, 600, 600);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
+        stage.setTitle("Game Tubes");
     }
 
     private void eventOnClick() {
@@ -44,7 +70,7 @@ public class Main extends Application {
     private void setupPipes() {
         for (int i = 0; i < 3; i++) {                       //field 3x3
             for (int j = 0; j < 3; j++) {
-                pane = new Rectangle(200, 200);
+                Rectangle pane = new Rectangle(200, 200);
                 byte[][] map = {
                         {22, 33, 23},                       //number means special pipe
                         {32, 40, 34},
@@ -68,37 +94,12 @@ public class Main extends Application {
                 } else {
                     pane.setFill(tpipefill);
                 }
-
                 Field.add(pane, i, j);
 
             }
         }
     }
 
-    private void setupField() {
-        Field = new GridPane();
-        Scene scene = new Scene(Field, 600, 600);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.show();
-        stage.setTitle("Game Tubes");
-        
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("New game");
-        alert.setHeaderText("Welcome to GameTubes!");
-        alert.setContentText("Please press 'Start' to start first level or 'Exit' to exit the application.");
-
-        ButtonType buttonNext = new ButtonType("Next");
-        ButtonType buttonExit = new ButtonType("Exit");
-        alert.getButtonTypes().setAll(buttonNext, buttonExit);
-
-        Optional<ButtonType> result = alert.showAndWait(); //result on muutuja
-        if (result.get() == buttonNext){
-            System.out.println("Next");
-        } else if (result.get() == buttonExit){
-            System.out.println("Exit");
-        }
-    }
     public static void main(String args[]) {
         launch(args);
     }
