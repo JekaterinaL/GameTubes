@@ -25,6 +25,8 @@ public class Main extends Application {
     private Stage stage;
     private Integer[] availableWidths;
     private int currentWidth;
+    private StopWatch sw;
+    private ArrayList<ResultTime> resultTimes;
 
     @Override
     public void start(Stage primaryStage) {
@@ -32,8 +34,10 @@ public class Main extends Application {
         mouseHandler = new MouseHandler();
         primaryStage.setTitle("Game Tubes");
         primaryStage.show();
-        availableWidths = PresetMaps.gatAvailableWidths().toArray(new Integer[0]);
+        availableWidths = PresetMaps.getAvailableWidths().toArray(new Integer[0]);
         currentWidth = availableWidths[0];
+        sw = new StopWatch();
+        resultTimes = new ArrayList<>(availableWidths.length);
 
         //informatsiooni akna loomine tekstiga
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -41,18 +45,18 @@ public class Main extends Application {
         alert.setHeaderText("Welcome to GameTubes!");
         alert.setContentText("Please press 'Start' to start first level or 'Exit' to exit the application.");
 
-        //Next ja Exit nupude loomine aknas
-        ButtonType buttonNext = new ButtonType("Next");
+        //Start ja Exit nupude loomine aknas
+        ButtonType buttonStart = new ButtonType("Start");
         ButtonType buttonExit = new ButtonType("Exit");
-        alert.getButtonTypes().setAll(buttonNext, buttonExit);
+        alert.getButtonTypes().setAll(buttonStart, buttonExit);
 
-        //vajutades nupule Next avaneb mänguväli
+        //vajutades nupule Start avaneb mänguväli
         //vajutades nupule Exit programm pannakse kinni
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == buttonNext){
+        if (result.isPresent() && result.get() == buttonStart){
             setupField ();
         } else if (result.isPresent() && result.get() == buttonExit){
-            System.out.println("Exit");
+            Platform.exit();
         }
     }
 
@@ -66,16 +70,16 @@ public class Main extends Application {
         fillPane(pane);
 
         Scene scene = new Scene(pane);
-
         stage.setScene(scene);
-        setStageSize();
 
+        setStageSize();
         calculateFill();
+        sw.start();         //funktsioon StopWatch kutsub meetodi start (mis oli klassis StopWatch)
     }
 
     private void setStageSize(){
-        double stageWidth = pipeWidth*pipeMap.length + gridPadding;
-        double stageHeight = pipeWidth*pipeMap.length + gridPadding;
+        double stageWidth = pipeWidth *(pipeMap.length + 2) + gridPadding * 2 + 20;
+        double stageHeight = pipeWidth * pipeMap.length + gridPadding * 2 + 40;
 
         stage.setWidth(stageWidth);
         stage.setHeight(stageHeight);
@@ -84,10 +88,13 @@ public class Main extends Application {
 
     public void fillPane(GridPane pane){
         for (int row = 0; row < pipeMap.length; row++){
-            for (int col = 0; col < pipeMap.length; col++){
+            for (int col = 0; col < pipeMap[row].length; col++){
                 Pipe pipe = pipeMap[row][col];
+                if (pipe == null){
+                    continue;
+                }
 
-                pipe.setPosition(row, col);
+                pipe.setPosition(col, row);
                 pipe.setOnMouseClicked(mouseHandler);
                 pipe.setMinWidth(pipeWidth);
                 pipe.setMinHeight(pipeWidth);
@@ -97,8 +104,12 @@ public class Main extends Application {
         }
     }
 
+    public static void main(String args[]) {
+        launch(args);
+    }
+
     public void calculateFill (){
-        ArrayList<Pipe> checklist = new ArrayList<>(currentWidth*currentWidth);
+        ArrayList<Pipe> checklist = new ArrayList<>(currentWidth * currentWidth);
 
         //taastakse täitmise kontroll
         for (Pipe[] pipeRow : pipeMap){
@@ -117,22 +128,22 @@ public class Main extends Application {
             item.setFlow(true);
 
             Pipe top = (item.y() - 1) >= 0 ? pipeMap[item.y() - 1][item.x()] : null;
-            if (!top.flowChecked && item.T && top.B && !checklist.contains(top)){
+            if (top != null && !top.flowChecked && item.T && top.B && !checklist.contains(top)){
                 checklist.add(top);
             }
 
-            Pipe right = (item.x() + 1) < currentWidth ? pipeMap[item.y()][item.x() + 1] : null;
-            if (!right.flowChecked && item.R && right.L && !checklist.contains(right)){
+            Pipe right = (item.x() + 1) < (currentWidth + 2) ? pipeMap[item.y()][item.x() + 1] : null;
+            if (right != null && !right.flowChecked && item.R && right.L && !checklist.contains(right)){
                 checklist.add(right);
             }
 
             Pipe bottom = (item.y() + 1) < currentWidth ? pipeMap[item.y() + 1][item.x()] : null;
-            if (!bottom.flowChecked && item.B && bottom.T && !checklist.contains(bottom)){
+            if (bottom != null && !bottom.flowChecked && item.B && bottom.T && !checklist.contains(bottom)){
                 checklist.add(bottom);
             }
 
             Pipe left = (item.x() - 1) >= 0 ? pipeMap[item.y()][item.x() - 1] : null;
-            if (!left.flowChecked && item.L && left.R && !checklist.contains(left)){
+            if (left != null && !left.flowChecked && item.L && left.R && !checklist.contains(left)){
                 checklist.add(left);
             }
 
@@ -141,24 +152,33 @@ public class Main extends Application {
 
         for (Pipe[] pipeMap1 : pipeMap){
             for (Pipe item : pipeMap1){
-                if (!item.flowChecked){
+                if (item != null && !item.flowChecked){
                     item.setFlow(false);
                 }
             }
         }
 
-        if (pipeMap[currentWidth][currentWidth].hasFlow()){
+        if (pipeMap[currentWidth - 1][currentWidth + 1].hasFlow()){
+            sw.stop();                  ////funktsioon StopWatch kutsub meetodi stop (mis oli klassis StopWatch)
+            double elapsedTime = sw.getElapsedTimeSecs();
+            resultTimes.add(new ResultTime(currentWidth, elapsedTime));
             setNextWidth();
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Level completed!");
-            alert.setHeaderText("Congratulations!");
+            alert.setHeaderText("Your level completion time(sec): " + elapsedTime);
 
             ButtonType buttonExit = new ButtonType("Exit");
             ButtonType buttonNext = null;
 
             if (currentWidth == 0){
-                alert.setContentText("You have completed all the levels!");
+                String results = "";
+                for(int i = 0; i < resultTimes.size(); i++){
+                    ResultTime resultTime = resultTimes.get(i);
+                    results += "\n" + (i + 1) + " level (width: " + resultTime.Width + ") time: " + resultTime.Time + "sec";
+                    }
+
+                alert.setContentText("You have completed all the levels!\nYour results:" + results);
                 alert.getButtonTypes().setAll(buttonExit);
             }else{
                 alert.setContentText("Please press 'Next' to proceed to next level or 'Exit' to exit the application.");
@@ -207,7 +227,4 @@ public class Main extends Application {
 
     }
 
-    public static void main(String args[]) {
-        launch(args);
-    }
 }

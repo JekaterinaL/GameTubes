@@ -10,5 +10,7 @@ public enum PipePicType {
     CPIPE,
     IPIPE,
     TPIPE,
-    XPIPE
+    XPIPE,
+    START,
+    FINISH
 }

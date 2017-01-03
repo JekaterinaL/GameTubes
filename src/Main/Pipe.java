@@ -32,24 +32,30 @@ public final class Pipe extends Region {
     }
 
     public void rotateClockwise(){
-        boolean temp = this.T;
-        this.T = this.R;
-        this.R = this.B;
-        this.B = this.L;
-        this.L = temp;
+        if (this.picType == PipePicType.START || this.picType == PipePicType.FINISH){
+            return;                     //kui objektideks on START või FINISH ei tee nendega midagi
+        }
 
-        double newAngle = this.getRotate() + 90;
-        this.setRotate(newAngle);
-    }
-
-    public void rotateCounterClockwise(){
         boolean temp = this.T;
         this.T = this.L;
         this.L = this.B;
         this.B = this.R;
         this.R = temp;
+        double newAngle = (this.getRotate() + 90) % 360;
+        this.setRotate(newAngle);
+    }
 
-        double newAngle = this.getRotate() - 90;
+    public void rotateCounterClockwise(){
+        if (this.picType == PipePicType.START || this.picType == PipePicType.FINISH){
+            return;                     //kui objektideks on START või FINISH ei tee nendega midagi
+        }
+
+        boolean temp = this.T;
+        this.T = this.R;
+        this.R = this.B;
+        this.B = this.L;
+        this.L = temp;
+        double newAngle = (this.getRotate() - 90) % 360;
         this.setRotate(newAngle);
     }
 
@@ -85,6 +91,13 @@ public final class Pipe extends Region {
                 } else {                              //vastasel juhul CPIPE
                     this.picType = PipePicType.CPIPE;
                 }
+                break;                                //break on oluline, kuna vastasel juhul kontrollitud muutujad
+            case 1:                                   //kontrollitakse järgmises protsessis
+                if (this.R){
+                    this.picType = PipePicType.START;
+                } else {
+                    this.picType = PipePicType.FINISH;
+                }
                 break;
         }
 
@@ -110,7 +123,7 @@ public final class Pipe extends Region {
 
     private void updateBackground(){
         BackgroundFill[] fills = new BackgroundFill[]{
-                new BackgroundFill(hasFlow ? Color.LIGHTBLUE : Color.WHITE,
+                new BackgroundFill(hasFlow ? Color.LIGHTBLUE : Color.WHITESMOKE,
                         CornerRadii.EMPTY,
                         null)
         };
@@ -149,9 +162,13 @@ public final class Pipe extends Region {
                 else if(!this.L)
                     angle = 270;
                 break;
+            case START:
+            case FINISH:
             case XPIPE:
                 angle = 0;
                 break;
+            default:
+                throw new AssertionError(this.picType.name());
         }
         this.setRotate(angle);
     }
