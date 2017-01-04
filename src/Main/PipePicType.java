@@ -9,8 +9,6 @@ package Main;
 public enum PipePicType {
     CPIPE,
     IPIPE,
-    TPIPE,
-    XPIPE,
     START,
     FINISH
 }

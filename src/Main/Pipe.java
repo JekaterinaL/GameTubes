@@ -79,12 +79,6 @@ public final class Pipe extends Region {
 
 
         switch(count){
-            case 4:
-                this.picType = PipePicType.XPIPE;   //Kui torus on 4 avatud otsa, joonistatakse XPIPE
-                break;
-            case 3:
-                this.picType = PipePicType.TPIPE;   //Kui torus on 3 avatud otsa, joonistatakse TPIPE
-                break;
             case 2:                                 //Kui torus on 2 avatud otsa, joonistatakse kas IPIPE või CPIPE
                 if ((this.T && this.B) || (this.L && this.R)) {
                     this.picType = PipePicType.IPIPE; //IPIPE siis, kui avatud otsad on üleval ja all või vasakul ja paremal
@@ -152,19 +146,8 @@ public final class Pipe extends Region {
                     angle = 90;
                 }
                 break;
-            case TPIPE:
-                if (!this.T)
-                    angle = 0;
-                else if(!this.R)
-                    angle = 90;
-                else if(!this.B)
-                    angle = 180;
-                else if(!this.L)
-                    angle = 270;
-                break;
             case START:
             case FINISH:
-            case XPIPE:
                 angle = 0;
                 break;
             default:
