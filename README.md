@@ -8,3 +8,4 @@ Mängus tuleb luua torustikku nii, et üleval vasakus nurgas olev toru oleks seo
 Naudi mängu ja tee oma rekordid!
 
 © Jekaterina Losseva
+Antud kood on litsenseeritud: Creative Commons Non-Commercial 4.0 (https://creativecommons.org/licenses/by-nc/4.0/)
