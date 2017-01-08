@@ -20,7 +20,7 @@ public class Main extends Application {
     //Globalaalsed muutujad, mis kasutatakse ainult selle klassi sees
     private MouseHandler mouseHandler;
     private Pipe[][] pipeMap;
-    private final double pipeWidth = 60;
+    private final double pipeWidth = 50;
     private final double gridPadding = 20;
     private Stage stage;
     private Integer[] availableWidths;
@@ -61,7 +61,7 @@ public class Main extends Application {
     }
 
     private void setupField() {
-        //mänguvälja loomine
+        //mänguvälja saamine
         pipeMap = PresetMaps.getPreset(currentWidth);
 
         GridPane pane = new GridPane();
@@ -74,13 +74,12 @@ public class Main extends Application {
 
         setStageSize();
         calculateFill();
-        sw.start();         //funktsioon StopWatch kutsub meetodi start (mis oli klassis StopWatch)
+        sw.start();
     }
 
     private void setStageSize(){
         double stageWidth = pipeWidth *(pipeMap.length + 2) + gridPadding * 2 + 20;
         double stageHeight = pipeWidth * pipeMap.length + gridPadding * 2 + 40;
-
         stage.setWidth(stageWidth);
         stage.setHeight(stageHeight);
         stage.centerOnScreen();
@@ -110,7 +109,6 @@ public class Main extends Application {
 
     public void calculateFill (){
         ArrayList<Pipe> checklist = new ArrayList<>(currentWidth * currentWidth);
-
         //taastakse täitmise kontroll
         for (Pipe[] pipeRow : pipeMap){
             for (Pipe item : pipeRow){
@@ -153,20 +151,23 @@ public class Main extends Application {
         for (Pipe[] pipeMap1 : pipeMap){
             for (Pipe item : pipeMap1){
                 if (item != null && !item.flowChecked){
-                    item.setFlow(false);
+                    item.setFlow(false);            //jäänud elemendid on false
                 }
             }
         }
 
-        if (pipeMap[currentWidth - 1][currentWidth + 1].hasFlow()){
-            sw.stop();                  ////funktsioon StopWatch kutsub meetodi stop (mis oli klassis StopWatch)
-            double elapsedTime = sw.getElapsedTimeSecs();
+        if (pipeMap[currentWidth - 1][currentWidth + 1].hasFlow()       //kontrollitakse nurkade täitmist
+                //&& pipeMap[currentWidth - 1][1].hasFlow()
+                //&& pipeMap[1][currentWidth - 1].hasFlow()
+            ){
+            sw.stop();
+            String elapsedTime = sw.getElapsedTime();
             resultTimes.add(new ResultTime(currentWidth, elapsedTime));
             setNextWidth();
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Level completed!");
-            alert.setHeaderText("Your level completion time(sec): " + elapsedTime);
+            alert.setHeaderText("Your level completion time: " + elapsedTime);
 
             ButtonType buttonExit = new ButtonType("Exit");
             ButtonType buttonNext = null;
@@ -175,7 +176,7 @@ public class Main extends Application {
                 String results = "";
                 for(int i = 0; i < resultTimes.size(); i++){
                     ResultTime resultTime = resultTimes.get(i);
-                    results += "\n" + (i + 1) + " level (width: " + resultTime.Width + ") time: " + resultTime.Time + "sec";
+                    results += "\n" + (i + 1) + " level (width: " + resultTime.Width + ") time: " + resultTime.Time;
                     }
 
                 alert.setContentText("You have completed all the levels!\nYour results:" + results);
@@ -209,8 +210,8 @@ public class Main extends Application {
         }
     }
 
+    //torudele vajutamine parema või vasaku klõpsuga
     public class MouseHandler implements EventHandler<MouseEvent> {
-
         @Override
         public void handle(MouseEvent event) {
             Pipe pipe = (Pipe)event.getSource();

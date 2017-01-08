@@ -2,9 +2,6 @@ package Main;
 
 import javafx.scene.image.Image;
 
-/**
- * Created by Jekaterina on 30.12.2016.
- */
 public class PipePic {
     private static final Image cpipe = new Image("/Main/img/c-pipe.png");
     private static final Image ipipe = new Image("/Main/img/i-pipe.png");
@@ -22,7 +19,6 @@ public class PipePic {
             case FINISH:
                 return finish;
             default:
-                //http://stackoverflow.com/questions/24863185/what-is-an-assertionerror-in-which-case-should-i-throw-it-from-my-own-code
                 throw new AssertionError(type.name());
         }
     }

@@ -4,9 +4,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
-/**
- * Created by Jekaterina on 02.01.2017.
- */
+
 public final class Pipe extends Region {
     public boolean T;  //top
     public boolean R;  //right
@@ -21,10 +19,10 @@ public final class Pipe extends Region {
     private BackgroundImage[] backgroundImage;
 
     public Pipe(boolean t, boolean r, boolean b, boolean l){
-        this.T = t;
-        this.R = r;
-        this.B = b;
-        this.L = l;
+        T = t;
+        R = r;
+        B = b;
+        L = l;
 
         setImage();
         setInitialImageAngle();
@@ -36,13 +34,13 @@ public final class Pipe extends Region {
             return;                     //kui objektideks on START või FINISH ei tee nendega midagi
         }
 
-        boolean temp = this.T;
-        this.T = this.L;
-        this.L = this.B;
-        this.B = this.R;
-        this.R = temp;
-        double newAngle = (this.getRotate() + 90) % 360;
-        this.setRotate(newAngle);
+        boolean temp = T;
+        T = L;
+        L = B;
+        B = R;
+        R = temp;
+        double newAngle = (this.getRotate() + 90);
+        setRotate(newAngle);
     }
 
     public void rotateCounterClockwise(){
@@ -50,54 +48,54 @@ public final class Pipe extends Region {
             return;                     //kui objektideks on START või FINISH ei tee nendega midagi
         }
 
-        boolean temp = this.T;
-        this.T = this.R;
-        this.R = this.B;
-        this.B = this.L;
-        this.L = temp;
-        double newAngle = (this.getRotate() - 90) % 360;
-        this.setRotate(newAngle);
+        boolean temp = T;
+        T = R;
+        R = B;
+        B = L;
+        L = temp;
+        double newAngle = (this.getRotate() - 90);
+        setRotate(newAngle);
     }
 
     public void setPosition(int x, int y){
-        this.Position = new Position(x, y);
+        Position = new Position(x, y);
     }
 
     public int x(){
-        return this.Position.X;
+        return Position.X;
     }
 
     public int y(){
-        return this.Position.Y;
+        return Position.Y;
     }
 
     private void setImage(){
-        int count = (this.T ? 1 : 0)    //Kui torus on olemas avatud ots üleval, tagasta 1
-                + (this.R ? 1 : 0)      //Kui torus on olemas avatud ots paremal, tagasta 1
-                + (this.B ? 1 : 0)      //Kui torus on olemas avatud ots all, tagasta 1
-                + (this.L ? 1 : 0);     //Kui torus on olemas avatud ots vasakul, tagasta 1
+        int count = (T ? 1 : 0)    //Kui torus on avatud ots üleval, tagasta 1
+                + (R ? 1 : 0)      //Kui torus on avatud ots paremal, tagasta 1
+                + (B ? 1 : 0)      //Kui torus on avatud ots all, tagasta 1
+                + (L ? 1 : 0);     //Kui torus on avatud ots vasakul, tagasta 1
 
 
         switch(count){
-            case 2:                                 //Kui torus on 2 avatud otsa, joonistatakse kas IPIPE või CPIPE
-                if ((this.T && this.B) || (this.L && this.R)) {
-                    this.picType = PipePicType.IPIPE; //IPIPE siis, kui avatud otsad on üleval ja all või vasakul ja paremal
-                } else {                              //vastasel juhul CPIPE
-                    this.picType = PipePicType.CPIPE;
+            case 2:                              //Kui torus on 2 avatud otsa, joonistatakse kas IPIPE või CPIPE
+                if ((T && B) || (L && R)) {
+                    picType = PipePicType.IPIPE; //IPIPE siis, kui avatud otsad on üleval-all või vasakul-paremal
+                } else {                         //vastasel juhul CPIPE
+                    picType = PipePicType.CPIPE;
                 }
-                break;                                //break on oluline, kuna vastasel juhul kontrollitud muutujad
-            case 1:                                   //kontrollitakse järgmises protsessis
-                if (this.R){
-                    this.picType = PipePicType.START;
+                break;
+            case 1:
+                if (R){
+                    picType = PipePicType.START;
                 } else {
-                    this.picType = PipePicType.FINISH;
+                    picType = PipePicType.FINISH;
                 }
                 break;
         }
 
-        Image pic = PipePic.getImage(this.picType);
+        Image pic = PipePic.getImage(picType);
 
-        backgroundImage = new BackgroundImage[]{
+        backgroundImage = new BackgroundImage[]{    //torude joonistamine
                 new BackgroundImage(pic,
                         BackgroundRepeat.NO_REPEAT,
                         BackgroundRepeat.NO_REPEAT,
@@ -111,7 +109,7 @@ public final class Pipe extends Region {
         updateBackground();
     }
 
-    public boolean hasFlow(){
+    public boolean hasFlow(){                                   //hasFlow muutuja väärtus kättesaadav klassis Main
         return hasFlow;
     }
 
@@ -123,26 +121,26 @@ public final class Pipe extends Region {
         };
 
         Background back = new Background(fills, backgroundImage);
-        this.setBackground(back);
+        setBackground(back);
     }
 
-    private void setInitialImageAngle(){
+    private void setInitialImageAngle(){                        //esmane pildi nurk
         double angle = 0;
         switch(this.picType){
             case CPIPE:
-                if(this.L && this.B)
+                if(L && B)
                     angle = 0;
-                else if(this.T && this.L)
+                else if(T && L)
                     angle = 90;
-                else if(this.T && this.R)
+                else if(T && R)
                     angle = 180;
-                else if(this.R && this.B)
+                else if(R && B)
                     angle = 270;
                 break;
             case IPIPE:
-                if (this.T && this.B) {
+                if (T && B) {
                     angle = 0;
-                }else if (this.L && this.R){
+                }else if (L && R){
                     angle = 90;
                 }
                 break;
@@ -153,7 +151,7 @@ public final class Pipe extends Region {
             default:
                 throw new AssertionError(this.picType.name());
         }
-        this.setRotate(angle);
+        setRotate(angle);
     }
 }
 

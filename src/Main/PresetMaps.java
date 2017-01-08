@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * Created by Jekaterina on 02.01.2017.
- */
 public class PresetMaps {
 
     public static Set<Integer> getAvailableWidths(){
@@ -15,28 +12,25 @@ public class PresetMaps {
     }
 
     public static Pipe[][] getPreset(int width){
-        ArrayList<Pipe[][]> list = presets.get(width);
+        ArrayList<Pipe[][]> list = presets.get(width);                        //kaart teatud suurusega 3, 5, 7, 9 või 11
 
-        int randomList = ThreadLocalRandom.current().nextInt(0, list.size());
-
+        int randomList = ThreadLocalRandom.current().nextInt(0, list.size()); //praeguseks ainult 3 variandi
         Pipe[][] result = list.get(randomList);
         for (Pipe[] pipeRow : result) {
-            for (Pipe item : pipeRow) {
+            for (Pipe item : pipeRow) {                                       //käiakse läbi kõik elemendid 2D massivis
                 if(item == null)
                     continue;
 
-                int randomRotations = ThreadLocalRandom.current().nextInt(0, 4);
+                int randomRotations = ThreadLocalRandom.current().nextInt(0, 4); //0, 1, 2 või 3 korda
                 for(int i = 0; i < randomRotations; i++){
-                    item.rotateClockwise();                 //kõik torud roteeritakse suvaliselt
+                    item.rotateClockwise();             //kõik torud roteeritakse päripäevaselt
                 }
             }
         }
-
         return result;
     }
 
     //Torustiku loomine - kõik torude otsad on omavahel seotud
-    //Integer on võti ja ArrayList on väärtused
     private static HashMap<Integer, ArrayList<Pipe[][]>> presets = new HashMap<Integer, ArrayList<Pipe[][]>>(){{
         put(3, new ArrayList<Pipe[][]>(){{
             add(new Pipe[][]{
@@ -74,8 +68,8 @@ public class PresetMaps {
                     {new Pipe(false, true, false, false), new Pipe(false, false, true, true), new Pipe(false, true, true, false), new Pipe(false, true, false, true), new Pipe(false, true, false, true), new Pipe(false, false, true, true), null},
                     {null, new Pipe(true, false, true, false), new Pipe(true, true, false, false), new Pipe(false, false, true, true), null, new Pipe(true, false, true, false), null},
                     {null, new Pipe(true, false, true, false), null, new Pipe(true, false, true, false), new Pipe(false, true, true, false), new Pipe(true, false, false, true), null},
-                    {null, new Pipe(true, true, false, false), new Pipe(false, false, true, true), new Pipe(true, false, true, false), new Pipe(true, false, true, false), null, null},
-                    {null, null, new Pipe(true, true, false, false), new Pipe(true, false, false, true), new Pipe(true, true, false, false), new Pipe(false, true, false, true), new Pipe(false, false, false, true)}
+                    {null, new Pipe(true, false, true, false), null, new Pipe(true, false, true, false), new Pipe(true, false, true, false), null, null},
+                    {null, new Pipe(false, false, true, true), new Pipe(false, true, false, true), new Pipe(true, false, false, true), new Pipe(true, true, false, false), new Pipe(false, true, false, true), new Pipe(false, false, false, true)}
             });
         }});
         put(7, new ArrayList<Pipe[][]>(){{
